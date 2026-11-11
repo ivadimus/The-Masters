@@ -112,6 +112,13 @@ body {
     display: block;
 }
 
+#archive .archive-delete {
+    margin-inline-end: 18px;
+    background: #c4453c !important;
+    border-color: #c4453c !important;
+    color: #fff !important;
+}
+
 #archive-back {
     display: inline-flex;
     align-items: center;
@@ -738,10 +745,12 @@ async function listPdfs(){const db=await archiveDb();const rows=await new Promis
 let archivePreviewUrl='';
 function viewPdf(blob){if(archivePreviewUrl)URL.revokeObjectURL(archivePreviewUrl);archivePreviewUrl=URL.createObjectURL(blob);const frame=byId('archive-frame');frame.hidden=false;frame.src=archivePreviewUrl;frame.scrollIntoView({block:'start'});}
 function downloadPdf(blob,name){const href=URL.createObjectURL(blob);const a=document.createElement('a');a.href=href;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(href),1000);}
+async function deletePdf(date){const db=await archiveDb();await new Promise((resolve,reject)=>{const tx=db.transaction('pdfs','readwrite');tx.objectStore('pdfs').delete(date);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});db.close();byId('archive-frame').hidden=true;await renderArchive();}
 const archiveEye='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
 const archiveDown='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const archiveTrash='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5h6v2M8 7l1 13h6l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function archiveLabel(date){return 'Checklist '+date.replaceAll('/','.');}
-async function renderArchive(){const rows=await listPdfs();const body=byId('archive-rows');body.replaceChildren();byId('archive-empty').hidden=rows.length>0;byId('archive-table').hidden=rows.length===0;for(const row of rows){const label=archiveLabel(row.date);const tr=document.createElement('tr');const file=document.createElement('td');file.className='archive-name';file.textContent=label;const actions=document.createElement('td');const wrap=document.createElement('div');wrap.className='archive-actions';const view=document.createElement('button');view.type='button';view.className='file-button archive-icon';view.setAttribute('aria-label','צפייה');view.innerHTML=archiveEye;view.onclick=()=>viewPdf(row.blob);const down=document.createElement('button');down.type='button';down.className='file-button archive-icon';down.setAttribute('aria-label','הורדה');down.innerHTML=archiveDown;down.onclick=()=>downloadPdf(row.blob,label+'.pdf');wrap.append(view,down);actions.append(wrap);tr.append(file,actions);body.append(tr);}}
+async function renderArchive(){const rows=await listPdfs();const body=byId('archive-rows');body.replaceChildren();byId('archive-empty').hidden=rows.length>0;byId('archive-table').hidden=rows.length===0;for(const row of rows){const label=archiveLabel(row.date);const tr=document.createElement('tr');const file=document.createElement('td');file.className='archive-name';file.textContent=label;const actions=document.createElement('td');const wrap=document.createElement('div');wrap.className='archive-actions';const view=document.createElement('button');view.type='button';view.className='file-button archive-icon';view.setAttribute('aria-label','צפייה');view.innerHTML=archiveEye;view.onclick=()=>viewPdf(row.blob);const down=document.createElement('button');down.type='button';down.className='file-button archive-icon';down.setAttribute('aria-label','הורדה');down.innerHTML=archiveDown;down.onclick=()=>downloadPdf(row.blob,label+'.pdf');const del=document.createElement('button');del.type='button';del.className='file-button archive-icon archive-delete';del.setAttribute('aria-label','מחיקה');del.innerHTML=archiveTrash;del.onclick=()=>deletePdf(row.date).catch(()=>{});wrap.append(del,view,down);actions.append(wrap);tr.append(file,actions);body.append(tr);}}
 async function showArchive(){byId('form').hidden=true;byId('report').hidden=true;byId('archive').hidden=false;byId('archive-frame').hidden=true;await renderArchive();window.scrollTo(0,0);}
 byId('open-archive').onclick=()=>showArchive().catch(()=>{});
 byId('archive-back').onclick=()=>{byId('archive').hidden=true;byId('form').hidden=false;window.scrollTo(0,0);if(!byId('form').hidden)size();};
