@@ -1,5 +1,5 @@
 <!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Heebo:wght@100..900&display=swap" rel="stylesheet"><title>צ'קליסט פתיחת חנות ROLEX</title><meta name="theme-color" content="#0f2d19"><style>
-[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;font-family:"Heebo",Arial,sans-serif;color:#f4f4f5;background:#0f2d19}button,input,textarea,select,a{font-family:inherit}.file-card{max-width:1040px;margin:24px auto;padding:26px;background:#0f2d19;border:1px solid rgba(255,255,255,0.14);border-radius:20px;display:flex;flex-direction:column;gap:26px}section{display:flex;flex-direction:column;gap:14px}h2{font-size:19px;margin:0}.file-button{display:inline-block;text-decoration:none;border:2px solid #BEAC96;background:#BEAC96;color:#251f21;padding:12px 28px;border-radius:999px;font-size:15px;font-weight:400;cursor:pointer}.caption{font-size:14px;color:#b9ac94}input{width:100%;background:#1d1d22;border:1px solid #45454a;border-radius:10px;color:white;padding:13px;font-size:17px}.check-item:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #BEAC96;outline-offset:3px}
+[hidden]{display:none!important}*{box-sizing:border-box}body{margin:0;font-family:"Heebo",Arial,sans-serif;color:#f4f4f5;background:#0f2d19}button,input,textarea,select,a{font-family:inherit}.file-card{max-width:1040px;margin:24px auto;padding:26px;background:transparent;border:1px solid rgba(255,255,255,0.14);border-radius:20px;display:flex;flex-direction:column;gap:26px}section{display:flex;flex-direction:column;gap:14px}h2{font-size:19px;margin:0}.file-button{display:inline-block;text-decoration:none;border:2px solid #BEAC96;background:#BEAC96;color:#251f21;padding:12px 28px;border-radius:999px;font-size:15px;font-weight:400;cursor:pointer}.caption{font-size:14px;color:#b9ac94}input{width:100%;background:#1d1d22;border:1px solid #45454a;border-radius:10px;color:white;padding:13px;font-size:17px}.check-item:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #BEAC96;outline-offset:3px}
 :root {
     --ds-page: #0f2d19;
     --ds-ink: #f4f4f5;
@@ -16,11 +16,15 @@ body {
     font-family: "Heebo", Arial, sans-serif;
 }
 
+body {
+    isolation: isolate;
+}
+
 body::before {
     content: "";
     position: fixed;
     inset: 0;
-    z-index: 80;
+    z-index: -1;
     pointer-events: none;
     background:
         linear-gradient(to bottom, #000 0%, rgba(0,0,0,0) 16%, rgba(0,0,0,0) 84%, #000 100%),
@@ -170,7 +174,7 @@ body::before {
     display: flex;
     flex-direction: column;
     min-height: 0;
-    background: #0f2d19;
+    background: transparent;
 }
 
 .form-shell {
@@ -193,8 +197,6 @@ body::before {
 }
 
 .form-dock {
-    position: relative;
-    z-index: 90;
     flex: 0 0 auto;
     width: min(1040px, calc(100% - 48px));
     margin: 4px auto 0;
@@ -309,7 +311,7 @@ body::before {
 
 .home-screen {
     min-height: 100dvh;
-    background: #0f2d19;
+    background: transparent;
 }
 
 .home-card {
