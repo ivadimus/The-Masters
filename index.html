@@ -456,6 +456,33 @@ body::before {
     font-size: 15px;
 }
 
+@keyframes send-no {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(8px); }
+    40% { transform: translateX(-8px); }
+    60% { transform: translateX(6px); }
+    80% { transform: translateX(-6px); }
+}
+
+#build.send-no {
+    animation: send-no .34s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #build.send-no {
+        animation: none;
+    }
+}
+
+@media (max-width: 768px) {
+    #build {
+        width: min(300px, 88%);
+        min-height: 52px;
+        padding: 0 28px;
+        font-size: 18px;
+    }
+}
+
 .pager {
     display: flex;
     direction: rtl;
@@ -1136,7 +1163,7 @@ async function sigImage(src){if(!src)return null;const img=new Image();img.src=s
 async function buildForms(indexes){capturePage();await logo.decode();const forms=[];for(const pi of indexes){forms.push({title:pages[pi].title,items:pages[pi].items,checks:checks[pi],problems:problems[pi],notes:notes[pi],name:(names[pi]||'').trim(),signature:await sigImage(signatures[pi])});}return ChecklistPdf.buildChecklistReport({dateLabel:dateLabel(),logo,forms});}
 async function downloadForm(pi){const report=await buildForms([pi]);downloadPdf(report.blob,'Checklist '+menuLabels[pi]+' '+dateLabel().replaceAll('/','.')+'.pdf');}
 async function downloadDaily(){const report=await buildForms(pages.map((_,i)=>i));const name=archiveLabel(dateLabel())+'.pdf';downloadPdf(report.blob,name);try{await savePdf(new File([report.blob],name,{type:'application/pdf'}));}catch(e){}}
-byId('build').onclick=async()=>{if(rollDay())return;capturePage();const name=byId('name').value.trim();if(!formReady()){byId('name-error').hidden=nameIsValid(name);byId('form-note').textContent='נא למלא את כל הפרטים';return;}submitted[step]=true;persist();if(!submitted.every(Boolean)){showHome();return;}byId('build').disabled=true;try{const report=await buildForms(pages.map((_,i)=>i));const file=new File([report.blob],archiveLabel(dateLabel())+'.pdf',{type:'application/pdf'});await savePdf(file);showHome();}catch(e){byId('form-note').textContent='השמירה נכשלה';}finally{byId('build').disabled=false;refreshSend();}};
+byId('build').onclick=async()=>{if(rollDay())return;capturePage();const name=byId('name').value.trim();if(!formReady()){byId('name-error').hidden=nameIsValid(name);byId('form-note').textContent='נא למלא את כל הפרטים';const btn=byId('build');btn.classList.remove('send-no');void btn.offsetWidth;btn.classList.add('send-no');return;}submitted[step]=true;persist();if(!submitted.every(Boolean)){showHome();return;}byId('build').disabled=true;try{const report=await buildForms(pages.map((_,i)=>i));const file=new File([report.blob],archiveLabel(dateLabel())+'.pdf',{type:'application/pdf'});await savePdf(file);showHome();}catch(e){byId('form-note').textContent='השמירה נכשלה';}finally{byId('build').disabled=false;refreshSend();}};byId('build').addEventListener('animationend',()=>byId('build').classList.remove('send-no'));
 byId('share').onclick=async()=>{try{if(navigator.share&&navigator.canShare&&navigator.canShare({files:[pdf]}))await navigator.share({files:[pdf],title:"צ'קליסט פתיחת חנות ROLEX"});}catch(e){}};
 byId('print').onclick=()=>window.print();byId('back').onclick=()=>{byId('report').hidden=true;byId('archive').hidden=true;showHome();};byId('home-btn').onclick=showHome;byId('logo-home').onclick=showHome;byId('home-logo').onclick=showHome;byId('home-archive').onclick=()=>showArchive().catch(()=>{});byId('home-daily').onclick=()=>downloadDaily().catch(()=>{});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')rollDay();});window.addEventListener('focus',rollDay);window.addEventListener('pageshow',rollDay);setInterval(rollDay,60000);dropOldDays();loadDay();showHome();makeLogoTransparent();
 </script></body></html>
